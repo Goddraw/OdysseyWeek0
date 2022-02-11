@@ -1,0 +1,74 @@
+<Program Name>: Guess The Number 2: Electric Bugaloo
+
+SEQUENCE main 
+DISPLAY "Welcome to The Guessing Game"
+DISPLAY "Choose the difficulty level you would like to play with (1 = VeryEasy, 2 = Easy, 3 = Medium, 
+4 = Hard, 5 = VeryHard "
+SET difficulty_level TO read user input
+CALL play_game WITH difficulty_level
+CALL display_result WITH answer_is_found
+ENDSEQUENCE
+
+SEQUENCE play_game USING difficulty_level
+    CALL pick_random_number WITH difficulty_level RETURNING random_number AND limit AND max_nb_tries
+    SET answer_is_found to false
+    SET amount_of_tries to 0
+    DISPLAY "You may try to guess the number. The number is between 1 and <limit>. You have <max_nb_tries> tries. Good luck! ^^"
+    WHILE answer_is_found is false
+        SET player_guess TO read user input
+        INCREMENT amount_of_tries
+        IF player_guess is NOT EQUAL TO random_number
+            IF max_nb_tries IS NOT EQUAL TO amount_of_tries
+                IF player_guess is LOWER THAN random_number
+                    DISPLAY "Higher!"
+                ENDIF
+                IF player_guess IS HIGHER THAN random_number
+                    DISPLAY "Lower"
+                ENDIF
+                Break out of the loop 
+            ENDIF
+            ELSE 
+                SET answer_is_found to true
+        ENDIF    
+    ENDWHILE
+        RETURN answer_is_found
+ENDSEQUENCE
+
+SEQUENCE pick_random_number USING difficulty_level
+INIT limit
+INIT max_nb_tries
+CASE difficulty_level OF 
+    1:
+        SET limit TO 10 
+        SET max_nb_tries to 5146862467
+
+    2:  SET limit TO 10
+        SET max_nb_tries TO 5
+
+    3:  SET limit TO 100
+        SET max_nb_tries TO 5
+
+    4:  SET limit TO 500
+        SET max_nb_tries TO 8
+
+    5:  SET limit TO 1000
+        SET max_nb_tries TO 9
+    ENDCASE
+    SET random_number TO random number (between 1 and limit)
+    RETURN random_number, limit, max_nb_tries
+ENDSEQUENCE
+
+SEQUENCE display_result RETURNING answer_is_found
+IF answer_is_found IS true
+    DISPLAY "CONGRATULATIONS! You have won the game! Would you like to continue playing? YES / NO"
+ENDIF      
+    ELSE
+        DISPLAY "Oh no! You lost. Would you like to try again? YES / NO"
+SET continue_playing TO user input
+    IF continue_playing IS YES
+        CALL main
+    ENDIF 
+        ELSE
+        DISPLAY: "See you another time. Have a good day!"
+        EXIT program
+ENDSEQUENCE
